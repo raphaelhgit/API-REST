@@ -1,15 +1,51 @@
 generator client {
   provider = "prisma-client"
-  output   = "../generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "sqlite"
 }
 
-model Todo {
-  id          Int     @id @default(autoincrement())
-  title       String
-  description String?
-  completed   Boolean @default(false)
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  name      String
+  role      Role     @default(visitor)
+  password  String
+  events    Event[]
 }
+
+model Event {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  title          String
+  description    String
+  date           DateTime
+  venue          String
+  city           String
+  price          Float
+  totalSeats     Int
+  availableSeats Int
+  category       Category
+  image          String?
+  organizerId    Int
+  organizer      User     @relation(fields: [organizerId], references: [id])
+}
+
+enum Role {
+  visitor
+  user
+  admin
+  orga
+}
+
+enum Category {
+  Concert
+  Conference
+  Festival
+  Sport
+  Theatre
+  Autre
+} 
