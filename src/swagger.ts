@@ -1,0 +1,302 @@
+export const swaggerSpec = {
+    openapi: "3.0.0",
+    info: {
+        title: "EventHub API",
+        version: "1.0.0",
+        description: "API de billetterie événementielle",
+    },
+    servers: [{ url: "http://localhost:3000" }],
+    components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: "http",
+                scheme: "bearer",
+                bearerFormat: "JWT",
+            },
+        },
+        schemas: {
+            User: {
+                type: "object",
+                properties: {
+                    id: { type: "integer" },
+                    name: { type: "string" },
+                    email: { type: "string" },
+                    role: { type: "string", enum: ["visitor", "user", "orga", "admin"] },
+                    createdAt: { type: "string", format: "date-time" },
+                },
+            },
+            Event: {
+                type: "object",
+                properties: {
+                    id: { type: "integer" },
+                    title: { type: "string" },
+                    description: { type: "string" },
+                    date: { type: "string", format: "date-time" },
+                    venue: { type: "string" },
+                    city: { type: "string" },
+                    price: { type: "number" },
+                    totalSeats: { type: "integer" },
+                    availableSeats: { type: "integer" },
+                    category: { type: "string", enum: ["Concert", "Conference", "Festival", "Sport", "Theatre", "Autre"] },
+                    image: { type: "string", nullable: true },
+                    organizerId: { type: "integer" },
+                },
+            },
+            Ticket: {
+                type: "object",
+                properties: {
+                    id: { type: "integer" },
+                    status: { type: "string", enum: ["Valide", "Utilise", "Annule"] },
+                    qrCode: { type: "string" },
+                    qrCodeImage: { type: "string", description: "Image QR code en base64" },
+                    eventId: { type: "integer" },
+                    userId: { type: "integer" },
+                    createdAt: { type: "string", format: "date-time" },
+                },
+            },
+        },
+    },
+    paths: {
+        "/api/users/register": {
+            post: {
+                tags: ["Utilisateurs"],
+                summary: "Créer un compte",
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["name", "email", "password"],
+                                properties: {
+                                    name: { type: "string", example: "Jean Martin" },
+                                    email: { type: "string", example: "jean@example.com" },
+                                    password: { type: "string", example: "password123" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    201: { description: "Compte créé" },
+                    400: { description: "Champs manquants" },
+                    409: { description: "Email déjà utilisé" },
+                },
+            },
+        },
+        "/api/users/login": {
+            post: {
+                tags: ["Utilisateurs"],
+                summary: "Se connecter",
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["email", "password"],
+                                properties: {
+                                    email: { type: "string", example: "utilisateur@example.com" },
+                                    password: { type: "string", example: "password123" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    200: { description: "Token JWT + infos utilisateur" },
+                    401: { description: "Identifiants incorrects" },
+                },
+            },
+        },
+        "/api/users/me": {
+            get: {
+                tags: ["Utilisateurs"],
+                summary: "Voir son profil",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    200: { description: "Profil utilisateur" },
+                    401: { description: "Non authentifié" },
+                },
+            },
+            put: {
+                tags: ["Utilisateurs"],
+                summary: "Modifier son nom",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["name"],
+                                properties: {
+                                    name: { type: "string", example: "Nouveau Nom" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    200: { description: "Profil mis à jour" },
+                    401: { description: "Non authentifié" },
+                },
+            },
+        },
+        "/api/events": {
+            get: {
+                tags: ["Événements"],
+                summary: "Liste des événements",
+                parameters: [
+                    { name: "category", in: "query", schema: { type: "string", enum: ["Concert", "Conference", "Festival", "Sport", "Theatre", "Autre"] } },
+                    { name: "city", in: "query", schema: { type: "string" } },
+                    { name: "minPrice", in: "query", schema: { type: "number" } },
+                    { name: "maxPrice", in: "query", schema: { type: "number" } },
+                    { name: "upcoming", in: "query", schema: { type: "boolean" } },
+                ],
+                responses: {
+                    200: { description: "Liste des événements" },
+                },
+            },
+            post: {
+                tags: ["Événements"],
+                summary: "Créer un événement",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["title", "description", "date", "venue", "city", "price", "totalSeats", "category"],
+                                properties: {
+                                    title: { type: "string", example: "Concert Jazz" },
+                                    description: { type: "string", example: "Une soirée jazz" },
+                                    date: { type: "string", format: "date-time", example: "2026-06-15T20:00:00Z" },
+                                    venue: { type: "string", example: "Salle Pleyel" },
+                                    city: { type: "string", example: "Paris" },
+                                    price: { type: "number", example: 35 },
+                                    totalSeats: { type: "integer", example: 100 },
+                                    category: { type: "string", enum: ["Concert", "Conference", "Festival", "Sport", "Theatre", "Autre"] },
+                                    image: { type: "string" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    201: { description: "Événement créé" },
+                    403: { description: "Réservé aux organisateurs" },
+                },
+            },
+        },
+        "/api/events/{id}": {
+            get: {
+                tags: ["Événements"],
+                summary: "Détail d'un événement",
+                parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+                responses: {
+                    200: { description: "Détail de l'événement" },
+                    404: { description: "Introuvable" },
+                },
+            },
+            put: {
+                tags: ["Événements"],
+                summary: "Modifier un événement",
+                security: [{ bearerAuth: [] }],
+                parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+                requestBody: {
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                properties: {
+                                    title: { type: "string" },
+                                    price: { type: "number" },
+                                    totalSeats: { type: "integer" },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    200: { description: "Événement mis à jour" },
+                    403: { description: "Non autorisé" },
+                    404: { description: "Introuvable" },
+                },
+            },
+            delete: {
+                tags: ["Événements"],
+                summary: "Supprimer un événement",
+                security: [{ bearerAuth: [] }],
+                parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+                responses: {
+                    200: { description: "Événement supprimé" },
+                    403: { description: "Non autorisé" },
+                    409: { description: "Des billets ont déjà été vendus" },
+                },
+            },
+        },
+        "/api/tickets": {
+            post: {
+                tags: ["Billets"],
+                summary: "Acheter un billet",
+                security: [{ bearerAuth: [] }],
+                requestBody: {
+                    required: true,
+                    content: {
+                        "application/json": {
+                            schema: {
+                                type: "object",
+                                required: ["eventId"],
+                                properties: {
+                                    eventId: { type: "integer", example: 1 },
+                                },
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    201: { description: "Billet créé avec QR code" },
+                    400: { description: "Événement passé" },
+                    409: { description: "Plus de places disponibles" },
+                },
+            },
+        },
+        "/api/tickets/mine": {
+            get: {
+                tags: ["Billets"],
+                summary: "Mes billets",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    200: { description: "Liste de mes billets" },
+                    401: { description: "Non authentifié" },
+                },
+            },
+        },
+        "/api/tickets/{id}": {
+            get: {
+                tags: ["Billets"],
+                summary: "Détail d'un billet avec QR code",
+                security: [{ bearerAuth: [] }],
+                parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+                responses: {
+                    200: { description: "Billet + image QR code base64" },
+                    403: { description: "Ce billet ne vous appartient pas" },
+                    404: { description: "Introuvable" },
+                },
+            },
+        },
+        "/api/dashboard": {
+            get: {
+                tags: ["Tableau de bord"],
+                summary: "Statistiques de l'organisateur",
+                security: [{ bearerAuth: [] }],
+                responses: {
+                    200: { description: "Stats globales + liste des événements avec billets vendus" },
+                    403: { description: "Réservé aux organisateurs" },
+                },
+            },
+        },
+    },
+};
