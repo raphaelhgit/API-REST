@@ -29,3 +29,12 @@ export const Category = {
 } as const
 
 export type Category = (typeof Category)[keyof typeof Category]
+
+
+export const TicketStatus = {
+  Valide: 'Valide',
+  Utilise: 'Utilise',
+  Annule: 'Annule'
+} as const
+
+export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]

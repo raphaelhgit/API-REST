@@ -15,6 +15,7 @@ model User {
   role      Role     @default(visitor)
   password  String
   events    Event[]
+  tickets   Ticket[]
 }
 
 model Event {
@@ -32,6 +33,18 @@ model Event {
   image          String?
   organizerId    Int
   organizer      User     @relation(fields: [organizerId], references: [id])
+  tickets        Ticket[]
+}
+
+model Ticket {
+  id        Int          @id @default(autoincrement())
+  createdAt DateTime     @default(now())
+  status    TicketStatus @default(Valide)
+  qrCode    String       @unique
+  eventId   Int
+  userId    Int
+  event     Event        @relation(fields: [eventId], references: [id])
+  user      User         @relation(fields: [userId], references: [id])
 }
 
 enum Role {
@@ -48,4 +61,10 @@ enum Category {
   Sport
   Theatre
   Autre
+}
+
+enum TicketStatus {
+  Valide
+  Utilise
+  Annule
 } 

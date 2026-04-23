@@ -297,6 +297,7 @@ export type EventWhereInput = {
   image?: Prisma.StringNullableFilter<"Event"> | string | null
   organizerId?: Prisma.IntFilter<"Event"> | number
   organizer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  tickets?: Prisma.TicketListRelationFilter
 }
 
 export type EventOrderByWithRelationInput = {
@@ -314,6 +315,7 @@ export type EventOrderByWithRelationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   organizerId?: Prisma.SortOrder
   organizer?: Prisma.UserOrderByWithRelationInput
+  tickets?: Prisma.TicketOrderByRelationAggregateInput
 }
 
 export type EventWhereUniqueInput = Prisma.AtLeast<{
@@ -334,6 +336,7 @@ export type EventWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringNullableFilter<"Event"> | string | null
   organizerId?: Prisma.IntFilter<"Event"> | number
   organizer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  tickets?: Prisma.TicketListRelationFilter
 }, "id">
 
 export type EventOrderByWithAggregationInput = {
@@ -389,6 +392,7 @@ export type EventCreateInput = {
   category: $Enums.Category
   image?: string | null
   organizer: Prisma.UserCreateNestedOneWithoutEventsInput
+  tickets?: Prisma.TicketCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateInput = {
@@ -405,6 +409,7 @@ export type EventUncheckedCreateInput = {
   category: $Enums.Category
   image?: string | null
   organizerId: number
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutEventInput
 }
 
 export type EventUpdateInput = {
@@ -420,6 +425,7 @@ export type EventUpdateInput = {
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizer?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
+  tickets?: Prisma.TicketUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateInput = {
@@ -436,6 +442,7 @@ export type EventUncheckedUpdateInput = {
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   organizerId?: Prisma.IntFieldUpdateOperationsInput | number
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutEventNestedInput
 }
 
 export type EventCreateManyInput = {
@@ -558,6 +565,11 @@ export type EventSumOrderByAggregateInput = {
   organizerId?: Prisma.SortOrder
 }
 
+export type EventScalarRelationFilter = {
+  is?: Prisma.EventWhereInput
+  isNot?: Prisma.EventWhereInput
+}
+
 export type EventCreateNestedManyWithoutOrganizerInput = {
   create?: Prisma.XOR<Prisma.EventCreateWithoutOrganizerInput, Prisma.EventUncheckedCreateWithoutOrganizerInput> | Prisma.EventCreateWithoutOrganizerInput[] | Prisma.EventUncheckedCreateWithoutOrganizerInput[]
   connectOrCreate?: Prisma.EventCreateOrConnectWithoutOrganizerInput | Prisma.EventCreateOrConnectWithoutOrganizerInput[]
@@ -616,6 +628,20 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
+export type EventCreateNestedOneWithoutTicketsInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutTicketsInput, Prisma.EventUncheckedCreateWithoutTicketsInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTicketsInput
+  connect?: Prisma.EventWhereUniqueInput
+}
+
+export type EventUpdateOneRequiredWithoutTicketsNestedInput = {
+  create?: Prisma.XOR<Prisma.EventCreateWithoutTicketsInput, Prisma.EventUncheckedCreateWithoutTicketsInput>
+  connectOrCreate?: Prisma.EventCreateOrConnectWithoutTicketsInput
+  upsert?: Prisma.EventUpsertWithoutTicketsInput
+  connect?: Prisma.EventWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EventUpdateToOneWithWhereWithoutTicketsInput, Prisma.EventUpdateWithoutTicketsInput>, Prisma.EventUncheckedUpdateWithoutTicketsInput>
+}
+
 export type EventCreateWithoutOrganizerInput = {
   createdAt?: Date | string
   title: string
@@ -628,6 +654,7 @@ export type EventCreateWithoutOrganizerInput = {
   availableSeats: number
   category: $Enums.Category
   image?: string | null
+  tickets?: Prisma.TicketCreateNestedManyWithoutEventInput
 }
 
 export type EventUncheckedCreateWithoutOrganizerInput = {
@@ -643,6 +670,7 @@ export type EventUncheckedCreateWithoutOrganizerInput = {
   availableSeats: number
   category: $Enums.Category
   image?: string | null
+  tickets?: Prisma.TicketUncheckedCreateNestedManyWithoutEventInput
 }
 
 export type EventCreateOrConnectWithoutOrganizerInput = {
@@ -689,6 +717,84 @@ export type EventScalarWhereInput = {
   organizerId?: Prisma.IntFilter<"Event"> | number
 }
 
+export type EventCreateWithoutTicketsInput = {
+  createdAt?: Date | string
+  title: string
+  description: string
+  date: Date | string
+  venue: string
+  city: string
+  price: number
+  totalSeats: number
+  availableSeats: number
+  category: $Enums.Category
+  image?: string | null
+  organizer: Prisma.UserCreateNestedOneWithoutEventsInput
+}
+
+export type EventUncheckedCreateWithoutTicketsInput = {
+  id?: number
+  createdAt?: Date | string
+  title: string
+  description: string
+  date: Date | string
+  venue: string
+  city: string
+  price: number
+  totalSeats: number
+  availableSeats: number
+  category: $Enums.Category
+  image?: string | null
+  organizerId: number
+}
+
+export type EventCreateOrConnectWithoutTicketsInput = {
+  where: Prisma.EventWhereUniqueInput
+  create: Prisma.XOR<Prisma.EventCreateWithoutTicketsInput, Prisma.EventUncheckedCreateWithoutTicketsInput>
+}
+
+export type EventUpsertWithoutTicketsInput = {
+  update: Prisma.XOR<Prisma.EventUpdateWithoutTicketsInput, Prisma.EventUncheckedUpdateWithoutTicketsInput>
+  create: Prisma.XOR<Prisma.EventCreateWithoutTicketsInput, Prisma.EventUncheckedCreateWithoutTicketsInput>
+  where?: Prisma.EventWhereInput
+}
+
+export type EventUpdateToOneWithWhereWithoutTicketsInput = {
+  where?: Prisma.EventWhereInput
+  data: Prisma.XOR<Prisma.EventUpdateWithoutTicketsInput, Prisma.EventUncheckedUpdateWithoutTicketsInput>
+}
+
+export type EventUpdateWithoutTicketsInput = {
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  venue?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalSeats?: Prisma.IntFieldUpdateOperationsInput | number
+  availableSeats?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizer?: Prisma.UserUpdateOneRequiredWithoutEventsNestedInput
+}
+
+export type EventUncheckedUpdateWithoutTicketsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  venue?: Prisma.StringFieldUpdateOperationsInput | string
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.FloatFieldUpdateOperationsInput | number
+  totalSeats?: Prisma.IntFieldUpdateOperationsInput | number
+  availableSeats?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  organizerId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
 export type EventCreateManyOrganizerInput = {
   id?: number
   createdAt?: Date | string
@@ -716,6 +822,7 @@ export type EventUpdateWithoutOrganizerInput = {
   availableSeats?: Prisma.IntFieldUpdateOperationsInput | number
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tickets?: Prisma.TicketUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateWithoutOrganizerInput = {
@@ -731,6 +838,7 @@ export type EventUncheckedUpdateWithoutOrganizerInput = {
   availableSeats?: Prisma.IntFieldUpdateOperationsInput | number
   category?: Prisma.EnumCategoryFieldUpdateOperationsInput | $Enums.Category
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tickets?: Prisma.TicketUncheckedUpdateManyWithoutEventNestedInput
 }
 
 export type EventUncheckedUpdateManyWithoutOrganizerInput = {
@@ -749,6 +857,35 @@ export type EventUncheckedUpdateManyWithoutOrganizerInput = {
 }
 
 
+/**
+ * Count Type EventCountOutputType
+ */
+
+export type EventCountOutputType = {
+  tickets: number
+}
+
+export type EventCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tickets?: boolean | EventCountOutputTypeCountTicketsArgs
+}
+
+/**
+ * EventCountOutputType without action
+ */
+export type EventCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EventCountOutputType
+   */
+  select?: Prisma.EventCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * EventCountOutputType without action
+ */
+export type EventCountOutputTypeCountTicketsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TicketWhereInput
+}
+
 
 export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -765,6 +902,8 @@ export type EventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   image?: boolean
   organizerId?: boolean
   organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  tickets?: boolean | Prisma.Event$ticketsArgs<ExtArgs>
+  _count?: boolean | Prisma.EventCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["event"]>
 
 export type EventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -820,6 +959,8 @@ export type EventSelectScalar = {
 export type EventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "title" | "description" | "date" | "venue" | "city" | "price" | "totalSeats" | "availableSeats" | "category" | "image" | "organizerId", ExtArgs["result"]["event"]>
 export type EventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  tickets?: boolean | Prisma.Event$ticketsArgs<ExtArgs>
+  _count?: boolean | Prisma.EventCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type EventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -832,6 +973,7 @@ export type $EventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Event"
   objects: {
     organizer: Prisma.$UserPayload<ExtArgs>
+    tickets: Prisma.$TicketPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1242,6 +1384,7 @@ readonly fields: EventFieldRefs;
 export interface Prisma__EventClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organizer<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  tickets<T extends Prisma.Event$ticketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Event$ticketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1680,6 +1823,30 @@ export type EventDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Events to delete.
    */
   limit?: number
+}
+
+/**
+ * Event.tickets
+ */
+export type Event$ticketsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Ticket
+   */
+  select?: Prisma.TicketSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Ticket
+   */
+  omit?: Prisma.TicketOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TicketInclude<ExtArgs> | null
+  where?: Prisma.TicketWhereInput
+  orderBy?: Prisma.TicketOrderByWithRelationInput | Prisma.TicketOrderByWithRelationInput[]
+  cursor?: Prisma.TicketWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TicketScalarFieldEnum | Prisma.TicketScalarFieldEnum[]
 }
 
 /**
